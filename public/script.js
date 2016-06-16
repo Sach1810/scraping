@@ -1,11 +1,14 @@
 var socket = io.connect();
-
-socket.on('onStart', function(tracker) {
-    $(".list").empty();
-    var data = Object.keys(tracker);
-    for (var i = 0; i < data.length; i++) {
-        var reference = data[i];
-        $(".list").append('<div id="' + data[i] + '" class="all">' + data[i] + '</div>');
-        $('#' + data[i]).css('font-size', tracker[reference] * 10 + "px");
+var list = [];
+socket.on('new', function(obj) {
+    if (obj.tracker[obj.word] == 1) {
+        $(".list").append('<div id="' + obj.word + '" class="all">' + obj.word + "  " + '</div>');
     }
+
+});
+
+socket.on('update', function(obj) {
+        obj.tracker[obj.word] 
+
+    $('#' + obj.word).css('font-size', obj.tracker[obj.word] * 10 + "px");
 });

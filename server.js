@@ -71,11 +71,20 @@ var list = function(data) {
 
         if (word in tracker) {
             tracker[word] += 1;
+            io.emit('update', {
+                word: word,
+                tracker: tracker
+            });
         } else {
             tracker[word] = 1;
+            io.emit('new', {
+                word: word,
+                tracker: tracker
+            });
         }
     }
-    io.emit('onStart', tracker);
+
+
 };
 
 

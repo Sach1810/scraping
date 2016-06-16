@@ -13,31 +13,24 @@ app.use(express.static('node_modules'));
 app.use('/', express.static(__dirname + '/public'));
 
 var tracker = {};
+io.on('connection', function(socket) {
 
-io.on('connection', function(socket){
     console.log("a user connected");
     for (var i = 100; i > 0; i--) {
         retrieve().then(split);
     }
-    io.emit('onStart' ,tracker);
-    console.log(tracker);
 
-    // socket.on('new message', function(msg){
-    //     app.io.emit('chat message', msg);
-    //   });
+    tracker = {};
 });
 
+var retrieve = function() {
+    var x = new Promise(function(resolve, reject) {
+
+    });
+    return x;
+};
 
 
-
-app.get('/scrape', function(req, res) {
-    res.sendfile('index');
-    for (var i = 100; i > 0; i--) {
-        retrieve().then(split);
-    }
-
-    res.send(tracker);
-});
 
 
 var retrieve = function() {
@@ -56,7 +49,7 @@ var retrieve = function() {
                 };
                 var data = $('#classname').filter(function() {
                     y = $(this).text();
-
+                    console.log(y);
                     resolve(y);
                 });
             }
@@ -78,12 +71,12 @@ var list = function(data) {
         var word = data[i];
 
         if (word in tracker) {
-
             tracker[word] += 1;
         } else {
             tracker[word] = 1;
         }
     }
+    io.emit('onStart', tracker);
     console.log(tracker);
 };
 

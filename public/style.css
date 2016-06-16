@@ -2,11 +2,15 @@ h1 {
     text-align: center;
 }
 .all {
-    display: block;
-    width: 10vw;
+    display: none;
+    width: 15vw;
     margin-right: 5px;
     float: left;
     text-align: center;
-    transition: font-size 0.2s;
-    -webkit-transition: font-size 0.2s;
+}
+
+.show {
+    transition: font-size 1s;
+    -webkit-transition: font-size 1s;
+    display: block;
 }

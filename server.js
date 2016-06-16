@@ -5,94 +5,90 @@ var cheerio = require('cheerio');
 var Promise = require('promise');
 
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
-app.set('view engine', 'ejs');
-app.set('views', __dirname + '/display');
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static('public'));
 app.use(express.static('node_modules'));
+app.use('/', express.static(__dirname + '/public'));
 
-// var promise = new Promise(function (resolve, reject) {
-//   request('http://www.google.com', function (err, res) {
-//     if (err) reject(err);
-//     else resolve(res);
-//   });
-// });
-// promise.then(function(z){console.log(z);});
+var tracker = {};
 
+io.on('connection', function(socket){
+    console.log("a user connected");
+    for (var i = 100; i > 0; i--) {
+        retrieve().then(split);
+    }
+    io.emit('onStart' ,tracker);
+    console.log(tracker);
 
-app.get('/scrape', function(req, res){
-    retrieve().then(split);
+    // socket.on('new message', function(msg){
+    //     app.io.emit('chat message', msg);
+    //   });
 });
+
+
+
+
+app.get('/scrape', function(req, res) {
+    res.sendfile('index');
+    for (var i = 100; i > 0; i--) {
+        retrieve().then(split);
+    }
+
+    res.send(tracker);
+});
+
 
 var retrieve = function() {
-    var x = new Promise(function (resolve, reject){
+    var x = new Promise(function(resolve, reject) {
 
-    var url = 'http://www.classnamer.com/';
+        var url = 'http://www.classnamer.com/';
 
-    request(url, function(error, response, html){
+        request(url, function(error, response, html) {
 
-        if(!error){
-            var $ = cheerio.load(html);
+            if (!error) {
+                var $ = cheerio.load(html);
 
-            var classNamer;
-            var json = { class : ""};
-            var data = $('#classname').filter(function(){
-            y = $(this).text();
+                var classNamer;
+                var json = {
+                    class: ""
+                };
+                var data = $('#classname').filter(function() {
+                    y = $(this).text();
 
-            resolve(y);
-
-            console.log("1 " + y);
-            });
-        }
+                    resolve(y);
+                });
+            }
+        });
     });
-});
     return x;
 };
 
-//     var url = 'http://www.classnamer.com/';
-//     request(url, function(error, response, html){
-//
-//         if(!error){
-//             var $ = cheerio.load(html);
-//
-//             var classNamer;
-//             var json = { class : ""};
-//             var data = $('#classname').filter(function(){
-//             x = $(this).text();
-//             console.log("1 " + x);
-//             });
-//         }
-//     });
-//     console.log("2" + x);
-//     return x;
-// };
-
-
-
 var split = function(data) {
     var string = "";
-    console.log(data);
+
     var splitData = data.split(/(?=[A-Z])/);
-    console.log(splitData);
-    return splitData;
+
+    list(splitData);
+};
+
+var list = function(data) {
+    for (var i = 0; i < data.length; i++) {
+        var word = data[i];
+
+        if (word in tracker) {
+
+            tracker[word] += 1;
+        } else {
+            tracker[word] = 1;
+        }
+    }
+    console.log(tracker);
 };
 
 
-
-
-//     for (var i = 0; i < splitData.length; i++) {
-//         string += splitData[i] + " ";
-//     }
-//
-//     console.log(string);
-//     return string;
-// };
-
-app.listen('3000');
-
+server.listen(3000);
 console.log('port 3000 started');
 
 exports = module.exports = app;

@@ -49,7 +49,6 @@ var retrieve = function() {
                 };
                 var data = $('#classname').filter(function() {
                     y = $(this).text();
-                    console.log(y);
                     resolve(y);
                 });
             }
@@ -77,7 +76,6 @@ var list = function(data) {
         }
     }
     io.emit('onStart', tracker);
-    console.log(tracker);
 };
 
 

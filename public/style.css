@@ -10,7 +10,7 @@ h1 {
 }
 
 .show {
-    transition: font-size 1s;
-    -webkit-transition: font-size 1s;
+    transition: font-size 0.5s;
+    -webkit-transition: font-size 0.5s;
     display: block;
 }
